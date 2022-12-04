@@ -1,31 +1,36 @@
+import heapq
+
 f = open("input.txt")
 
-max = 0
-sum = 0
+elf_sum = 0
 
-def update_max(sum: int):
-    global max
-    if sum > max:
-        max = sum 
+max_elves = []
+
+def update_max(elf_sum: int):
+    global max_elves
+    heapq.heappush(max_elves, elf_sum)
+    if len(max_elves) > 3:
+        heapq.heappop(max_elves)
 
 while True:
     line = f.readline()
     if not line:
         print('-----')
-        print(f'{sum}')
+        print(f'{elf_sum}')
         print()
-        update_max(sum)
-        sum = 0
+        update_max(elf_sum)
+        elf_sum = 0
         break
     if line == '\n':
         print('-----')
-        print(f'{sum}')
+        print(f'{elf_sum}')
         print()
-        update_max(sum)
-        sum = 0
+        update_max(elf_sum)
+        elf_sum = 0
     else:
-        sum = sum + int(line)
+        elf_sum = elf_sum + int(line)
         print(f'{line.strip()}')
 
-print()
-print(f'max: {max}')
+print(max_elves)
+s = sum(max_elves)
+print(f'max sum: {s}')
