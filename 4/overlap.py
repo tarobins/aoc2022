@@ -13,8 +13,8 @@ while line := f.readline():
     range2Start = int(range2[0])
     range2End = int(range2[1])
 
-    if ((range1Start >= range2Start and range1End <= range2End) or 
-        (range2Start >= range1Start and range2End <= range1End)):
+    if ((range1End >= range2Start and range1Start <= range2End) or 
+        (range2End >= range1Start and range2Start <= range1End)):
         count += 1
 
 print(count)
