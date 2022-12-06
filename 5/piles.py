@@ -29,11 +29,12 @@ while line := f.readline():
         frm = int(tokens[3]) - 1
         to = int(tokens[5]) - 1
         print(count, frm, to)
+        piles[frm].rotate(-1 * count)
         for i in range(0, count):
-            item = piles[frm].popleft()
+            item = piles[frm].pop()
             piles[to].appendleft(item)
 
-    print(piles)
+    
 
 result = ''
 
