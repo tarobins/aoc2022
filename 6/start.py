@@ -6,9 +6,9 @@ s = f.readline()
 
 print(s)
 
-for i in range(3, len(s)):
+for i in range(13, len(s)):
     foundRepeat = False
-    for j in range(i-3, i+1):
+    for j in range(i-13, i+1):
         for k in range(j + 1, i+1):
             print(f'checking {j} {k} {s[j]} {s[k]}')
             if s[j] == s[k]:
