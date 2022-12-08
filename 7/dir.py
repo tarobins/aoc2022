@@ -1,6 +1,6 @@
 from collections import deque
 
-f = open("test_input.txt")
+f = open("input.txt")
 
 class Entry:
     def __init__(self, name) -> None:
@@ -42,6 +42,29 @@ root = Directory('/')
 
 directoryStack = deque([root])
 
+dirSum = 0
+
+
+def traverse(directory: Directory):
+    global dirSum
+    sum = 0
+
+    for entry in directory.children.values():
+        print(entry)
+        print(type(entry))
+        if isinstance(entry, File):
+            print('is file')
+            sum += entry.size
+        else:
+            print('is dir')
+            sum += traverse(entry)
+
+    if sum < 100000:
+        dirSum += sum
+    
+    return sum
+
+
 while line := f.readline().strip():
     tokens = line.split(' ')
     print(tokens)
@@ -57,7 +80,12 @@ while line := f.readline().strip():
     else: 
         directoryStack[0].children[tokens[1]] = File(tokens[1], int(tokens[0]))
 
+
 print(root)
+
+traverse(root)
+
+print(dirSum)
 
 
 
