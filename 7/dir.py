@@ -42,10 +42,7 @@ root = Directory('/')
 
 directoryStack = deque([root])
 
-dirSum = 0
-
-
-def traverse(directory: Directory):
+def used(directory: Directory) -> int:
     global dirSum
     sum = 0
 
@@ -57,12 +54,35 @@ def traverse(directory: Directory):
             sum += entry.size
         else:
             print('is dir')
-            sum += traverse(entry)
-
-    if sum < 100000:
-        dirSum += sum
+            sum += used(entry)
     
     return sum
+
+del_size = 0
+
+def find_del(directory: Directory) -> int:
+    global del_size
+    global min_del
+    sum = 0
+
+    for entry in directory.children.values():
+        print(entry)
+        print(type(entry))
+        if isinstance(entry, File):
+            print('is file')
+            sum += entry.size
+        else:
+            print('is dir')
+            sum += find_del(entry)
+    
+    print(f'visiting {directory.name} size {sum}')
+
+    if (del_size == 0 and sum > min_del) or (sum > min_del and sum < del_size):
+        print(f'set del size to {sum}')
+        del_size = sum
+
+    return sum 
+
 
 
 while line := f.readline().strip():
@@ -83,9 +103,16 @@ while line := f.readline().strip():
 
 print(root)
 
-traverse(root)
+used_space = used(root)
+total = 70000000
+free = total - used_space
+required = 30000000
+min_del = (required - free)
 
-print(dirSum)
+find_del(root)
+
+print(min_del)
+print(del_size)
 
 
 
