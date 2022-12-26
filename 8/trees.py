@@ -1,4 +1,4 @@
-f = open("input.txt")
+f = open("test_input.txt")
 
 lines = [[ int(x) for x in j] for j in f.read().splitlines()]
 
@@ -11,20 +11,15 @@ counted = [[False] * width for i in range(height)]
 
 count = 0
 
-def compRow(lines: list[list[int]]) -> int:
-    count = 0
-    for row in range(0, height):
-        max = -1
-        
-        for col in range(0, width):
-            if lines[row][col] > max:
-                if not counted[row][col]:
-                    count += 1
-                    counted[row][col] = True
-                max = lines[row][col]
-    return count
-
-count += compRow(lines = lines)
+for row in range(0, height):
+    max = -1
+    
+    for col in range(0, width):
+        if lines[row][col] > max:
+            if not counted[row][col]:
+                count += 1
+                counted[row][col] = True
+            max = lines[row][col]
 
 for row in range(0, height):
     max = -1
