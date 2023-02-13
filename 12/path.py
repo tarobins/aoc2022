@@ -21,6 +21,7 @@ def add_if_can_go(letters, new_position, current_letter_code, queue, visited):
         return
     if new_letter_code <= current_letter_code + 1:
         # print(f'  Adding {new_position}')
+        visited.add((new_position[0], new_position[1]))
         queue.append(new_position)
 
 def main(argv):
@@ -35,6 +36,8 @@ def main(argv):
     height = len(letters)
     width = len(letters[0])
 
+    print(f'Width: {width} Height: {height}')
+
     start = find_start(letters)
 
     queue = []
@@ -42,11 +45,13 @@ def main(argv):
     visited = set()
 
     # print(queue)
+    count = 0
 
     while True:
         current = queue.pop(0)
-        visited.add((current[0], current[1]))
-        print(f'At {current}')
+       
+        count += 1
+        print(f'At {current} itr {count}')
         current_letter = letters[current[0]][current[1]]
         if (current_letter == 'E'):
             print(f'Steps: {current[2]}')
