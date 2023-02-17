@@ -3,28 +3,41 @@ import re
 
 number_match = r'(\d+)'
 
-def convert_to_list(string, indent):
-    print(f'{indent}convert_to_list:{string}')
+def convert_number(string, indent):
+    print(f'{indent}convert_number: {string}')
+    val_string = re.match(number_match, string).group(1)
+    rest_of_string = string[len(val_string):]
+    return ([int(val_string)], rest_of_string)
+
+def convert_list_contents(string: str, indent):
+    print(f'convert_list_contents: {string}')
+    remaining_string = string
+    list = []
+    while True:
+        if remaining_string[0] == ',':
+            remaining_string = remaining_string[1:]
+        elif remaining_string[0] == ']':
+            return (list, remaining_string)
+        elif remaining_string[0] == '[':
+                (sublist, remaining_string) = convert_list(remaining_string, indent + '  ')
+                list.append(sublist)
+        elif remaining_string[0].isdigit():
+            (sublist, remaining_string) = convert_number(remaining_string, indent + '  ')
+            list.extend(sublist)
+        else:
+            exit('convert_list_contents: Unexpected charater')
+    
+
+def convert_list(string: str, indent):
+    print(f'{indent}convert_list: {string}')
     if string[0] == '[':
-        sublist = convert_to_list(string[1:], indent + '  ')
-        if sublist == None:
-            return []
+        (list, remaining_string) = convert_list_contents(string[1:], indent + '  ')
+        if remaining_string[0] != ']':
+            exit('Unexpected charater, missing ]')
         else:
-            return sublist
-    elif string[0] == ']':
-        return None
+            return (list, remaining_string[1:])
     else:
-        val_string = re.match(number_match, string).group(1)
-        print(f'{indent}val_string {val_string}')
-        if string[len(val_string)] == ',':
-            rest_of_string = string[len(val_string) + 1:]
-        else:
-            rest_of_string = string[len(val_string):]
-        rest_of_list = convert_to_list(rest_of_string, indent + '  ')
-        if rest_of_list == None:
-            return [int(val_string)]
-        else:
-            return [int(val_string)] + rest_of_list
+        exit('convert_list: Unexpected charater')
 
 
 def main(argv):
@@ -35,9 +48,11 @@ def main(argv):
     left_string = f.readline()
     right_string = f.readline()
 
-    left_string = '[[[]]]'
-    # left = convert_to_list(left_string, '')
-    left = eval(left_string)
+    left_string = '[[4,4],[4],4,[],[5,[6]]]'
+
+
+    (left, _) = convert_list(left_string, '')
+    # left = eval(left_string)
 
     print(left)
 
