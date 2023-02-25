@@ -4,13 +4,13 @@ import re
 number_match = r'(\d+)'
 
 def convert_number(string, indent):
-    print(f'{indent}convert_number: {string}')
+    # print(f'{indent}convert_number: {string}')
     val_string = re.match(number_match, string).group(1)
     rest_of_string = string[len(val_string):]
     return ([int(val_string)], rest_of_string)
 
 def convert_list_contents(string: str, indent):
-    print(f'convert_list_contents: {string}')
+    # print(f'convert_list_contents: {string}')
     remaining_string = string
     list = []
     while True:
@@ -29,7 +29,7 @@ def convert_list_contents(string: str, indent):
     
 
 def convert_list(string: str, indent):
-    print(f'{indent}convert_list: {string}')
+    # print(f'{indent}convert_list: {string}')
     if string[0] == '[':
         (list, remaining_string) = convert_list_contents(string[1:], indent + '  ')
         if remaining_string[0] != ']':
@@ -39,22 +39,69 @@ def convert_list(string: str, indent):
     else:
         exit('convert_list: Unexpected charater')
 
+def compare_list_elements(left, right):
+    if not isinstance(left, list):
+        return compare_list([left], right)
+    elif not isinstance(right, list):
+        return compare_list(left, [right])
+    else: 
+        return compare_list(left, right)
+
+def compare_list(left, right):
+    # print(f'Compare {left} to {right}')
+    for l in left:
+        # print(f'left {l}')
+        if len(right) == 0:
+            return False
+        r = right.pop(0)
+        # print(f'right {r}')
+        if isinstance(l, list) or isinstance(r, list):
+           res = compare_list_elements(l, r)
+           if res != None:
+             return res
+        elif l < r:
+            # print(f'C')
+            return True
+        elif l > r:
+            # print(f'D')
+            return False
+    if len(right) != 0:
+        # print(f'E')
+        return True
+    # print(f'F')
 
 def main(argv):
     file_name = argv[1]
 
     f = open(file_name)
 
-    left_string = f.readline()
-    right_string = f.readline()
+    pair = 0
+    sum = 0
 
-    left_string = '[[4,4],[4],4,[],[5,[6]]]'
+    while left_string := f.readline().strip():
+        pair += 1
+        right_string = f.readline().strip()
+        f.readline()
+        # print(left_string)
+        # print(right_string)
+        (left, _) = convert_list(left_string, '')
+        (right, _) = convert_list(right_string, '')
+        r = compare_list(left, right)
+        if r:
+            sum += pair
+    
+    print(sum)
 
 
-    (left, _) = convert_list(left_string, '')
-    # left = eval(left_string)
+    # left = [1, [1, 1], 1, 1]
+    # right = [1, [1], 1, 1]
 
-    print(left)
+    # print(left)
+    # print(right)
+
+    # r = compare_list(left, right)
+
+    # print(r)
 
     
 
