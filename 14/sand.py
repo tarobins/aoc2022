@@ -4,7 +4,7 @@ from functools import reduce
 
 def find_sand_resting_point(cave, max_y):
     current_location = (500, 0)
-    while current_location[1] <= max_y + 1:
+    while current_location[1] <= max_y:
         if not ((current_location[0], current_location[1] + 1) in cave):
             current_location = (current_location[0], current_location[1] + 1)
         elif not ((current_location[0] - 1, current_location[1] + 1) in cave):
@@ -13,7 +13,7 @@ def find_sand_resting_point(cave, max_y):
             current_location = (current_location[0] + 1, current_location[1] + 1)
         else:
             return current_location
-    return None
+    return current_location
 
 
 def main(argv):
@@ -45,6 +45,8 @@ def main(argv):
     while next_grain := find_sand_resting_point(cave, max_y):
         count += 1
         cave[next_grain] = "o"
+        if next_grain == (500, 0):
+            break
         
     print(count)
 
