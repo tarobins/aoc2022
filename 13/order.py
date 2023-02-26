@@ -1,4 +1,5 @@
 from absl import app
+from copy import deepcopy
 import re
 
 number_match = r'(\d+)'
@@ -70,27 +71,53 @@ def compare_list(left, right):
         return True
     # print(f'F')
 
+def find_position(target, elements):
+    count = 0
+    for pair in elements:
+        # print(f'pair if {pair}')
+        if not compare_list(deepcopy(target), deepcopy(pair)):
+            count += 1
+            # print(f'A pair is {pair}')
+            # print('A')
+        else:
+            # print(f'B pair is {pair}')
+            # print('B')
+            pass
+    return count + 1
+
+
+
 def main(argv):
     file_name = argv[1]
 
     f = open(file_name)
 
-    pair = 0
-    sum = 0
+    elements = []
 
     while left_string := f.readline().strip():
-        pair += 1
         right_string = f.readline().strip()
         f.readline()
-        # print(left_string)
-        # print(right_string)
-        (left, _) = convert_list(left_string, '')
-        (right, _) = convert_list(right_string, '')
-        r = compare_list(left, right)
-        if r:
-            sum += pair
+        elements.append(convert_list(left_string, '')[0])
+        elements.append(convert_list(right_string, '')[0])
+
+    print(elements)
     
-    print(sum)
+    p1 = find_position([[2]], elements)
+    p2 = find_position([[6]], elements) + 1
+    # print(p2)
+    print(p1 * p2)
+
+    # while left_string := f.readline().strip():
+    #     pair += 1
+    #     right_string = f.readline().strip()
+    #     f.readline()
+    #     (left, _) = convert_list(left_string, '')
+    #     (right, _) = convert_list(right_string, '')
+    #     r = compare_list(left, right)
+    #     if r:
+    #         sum += pair
+    
+    # print(sum)
 
 
     # left = [1, [1, 1], 1, 1]
