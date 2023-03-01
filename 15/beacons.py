@@ -130,6 +130,7 @@ def main(argv):
                     break
             if not covered:
                 print(point)
+                print(point[0] * max + point[1])
                 exit()
 
 
