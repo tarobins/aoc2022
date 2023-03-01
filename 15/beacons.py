@@ -11,6 +11,9 @@ class Sensor:
     
     def range(self):
         return abs(self.sensor[0] - self.beacon[0]) + abs(self.sensor[1] - self.beacon[1])
+    
+    # def boundary(self):
+
 
 class Line:
     def __init__(self, number):
@@ -24,14 +27,20 @@ class Line:
         # print(f'distance_along_line {distance_along_line}')
         line_intersect = sensor.sensor[0]
         # print(f'line_intersect {line_intersect}')
-        for i in range(line_intersect - distance_along_line, line_intersect + distance_along_line + 1, 1):
-            self.no_beacon.add(i)
+        self.no_beacon |= set(range(line_intersect - distance_along_line, line_intersect + distance_along_line + 1, 1))
     
     def mark_beacon(self, sensor):
         if sensor.beacon[1] == self.number:
             self.no_beacon.discard(sensor.beacon[0])
         if sensor.sensor[1] == self.number:
             self.no_beacon.discard(sensor.sensor[0])
+    
+    def count_in_range(self, min, max):
+        count = 0
+        for i in self.no_beacon:
+            if i >= min and i <= max:
+                count += 1
+        return count
 
     def __repr__(self) -> str:
         return f'Line {self.number}: {self.no_beacon}'
@@ -47,13 +56,23 @@ def main(argv):
         nums = list(map(int, re.findall(r'-?\d+', input_line)))
         sensors.append(Sensor((nums[0], nums[1]), (nums[2], nums[3])))
 
-    
-    line = Line(2000000)
-    for sensor in sensors:
-        line.process_sensor(sensor)
-    
-    for sensor in sensors:
-        line.mark_beacon(sensor)
+    min = 0
+    max = 4000000
+    for line_number in range(min, max + 1):
+        line = Line(line_number)
+        print('a')
+        for sensor in sensors:
+            line.process_sensor(sensor)
+        
+        print(f'line: {line_number} == {line.count_in_range(min, max)}')
+        # for sensor in sensors:
+        #     line.mark_beacon(sensor)
+        if (line.count_in_range(min, max) < max - min + 1):
+            print(f'line: {line_number} in rnage: {line.count_in_range(min, max)} {line}')
+            for i in range(min, max + 1):
+                if not (i in line.no_beacon):
+                    print(f'{i}, {line_number}')
+                    exit()
 
     # sensor = sensors[6]
     # print(sensor)
@@ -62,7 +81,7 @@ def main(argv):
     # line.process_sensor(sensors[6])
     # print(line)
     # print(line)
-    print(len(line.no_beacon))
+    
 
 
 if __name__ == '__main__':
