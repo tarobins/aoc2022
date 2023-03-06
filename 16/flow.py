@@ -18,29 +18,21 @@ def shortest_path(graph, nodes):
                 if graph[i][j] > graph[i][k] + graph[j][k]:
                     graph[i][j] = graph[i][k] + graph[j][k]
 
-def permutation_reward(permutation, graph, flows, start_node):
-    reward = 0
-    current_node = start_node
-    time = 0
-    for next_node_index in range(0, len(permutation)):
-        next_node = permutation[next_node_index]
-        # print(f'from {current_node} to {next_node} costs {graph[current_node][next_node]}')
-        time = time + graph[current_node][next_node] + 1
-        current_node = next_node
-        reward += (30 - time) * flows[next_node]
-        
-    return reward
-
 max_reward = 0
 
-def permute(currentPurmutation: list[str], elementsToPermutate: list[str], graph, flows, start_node):
+def permute(currentPurmutation: list[str], elementsToPermutate: list[str], graph, flows, start_node, partial_reward, time):
     global max_reward
     if len(elementsToPermutate) == 0:
         # print(f'perm {currentPurmutation}')
-        max_reward = max(max_reward, permutation_reward(currentPurmutation, graph, flows, start_node))
+        max_reward = max(max_reward, partial_reward)
     else:
-        for e in elementsToPermutate:            
-            permute([c for c in currentPurmutation] + [e], [i for i in elementsToPermutate if i != e], graph, flows, start_node)
+        for e in elementsToPermutate:
+            last_node = start_node
+            if len(currentPurmutation) > 0:
+                last_node = currentPurmutation[-1]
+            new_time = time + graph[last_node][e] + 1
+            new_reward = partial_reward + (30 - new_time) * flows[e]
+            permute([c for c in currentPurmutation] + [e], [i for i in elementsToPermutate if i != e], graph, flows, start_node, new_reward, new_time)
     
 
 def main(argv):
@@ -67,7 +59,7 @@ def main(argv):
     print(f'flows {flows})')
     print(f'start_node {start_node}')
 
-    permute([], list(flows.keys()), graph, flows, start_node)
+    permute([], list(flows.keys()), graph, flows, start_node, 0, 0)
 
     print(f'max reward: {max_reward}')
 
