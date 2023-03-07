@@ -1,7 +1,6 @@
 from absl import app
 import math
 import re
-import itertools
 
 def shortest_path(graph, nodes):
     for i in nodes:
@@ -19,12 +18,10 @@ def shortest_path(graph, nodes):
                     graph[i][j] = graph[i][k] + graph[j][k]
 
 def max_remaining(remaining, flows, time, current_node, graph):
-    # print(f'remaining {remaining}')
     time_to_next = graph[current_node][remaining[0]]
     r = 0
     for n in remaining:
         r += (30 - time - time_to_next) * flows[n]
-    # print(f'max for {remaining} {r}')
     return r
 
 max_reward = 0
@@ -71,38 +68,13 @@ def main(argv):
             flows[node_match[0]] = flow
 
     shortest_path(graph, nodes)
-    
-    # print(f'graph {graph}')
-    print(f'flows {flows})')
-    # print(f'start_node {start_node}')
 
     permute([], list(flows.keys()), graph, flows, start_node, 0, 0)
 
     print(f'max reward: {max_reward}')
-    # print(f'permutations: {num_permutations}')
-
-    # test_permutation = ['DD', 'BB', 'JJ', 'HH', 'EE', 'CC']
-
-    # print(f'test_permutation {test_permutation}')
-    # r = permutation_reward(test_permutation, graph, flows, start_node)
-
-    # print(f'reward {r}')
 
 
 
-
-    # zero_node_names = [k for k,v in flows.items() if v == 0 and k != start_node]
-    # print(f'zeros_nodes {zero_node_names}')
-
-    # for zero_node_name in zero_node_names:
-    #     zero_node = graph[zero_node_name]
-    #     print(f'process zero node: {zero_node_name} = {zero_node}')
-    #     for a in zero_node:
-    #         for b in zero_node:
-    #             a_node = graph[a]
-    #             b_node = graph[b]
-    #             print(a, a_node, b, b_node)
-        
 
 if __name__ == '__main__':
     app.run(main)
