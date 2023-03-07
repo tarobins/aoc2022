@@ -27,8 +27,6 @@ def max_remaining(remaining, flows, time, current_node, graph):
 max_reward = 0
 num_permutations = 0
 
-answer = ['AA', 'KU', 'FR', 'QO', 'VD', 'AJ', 'CG', 'WI', 'GJ']
-
 def permute(currentPurmutation: list[str], elementsToPermutate: list[str], graph, flows, start_node, partial_reward, time):
     global max_reward, num_permutations
     current_node = start_node
