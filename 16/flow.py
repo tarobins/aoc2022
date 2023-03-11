@@ -21,29 +21,36 @@ def shortest_path(graph, nodes):
 #     time_to_next = graph[current_node][remaining[0]]
 #     r = 0
 #     for n in remaining:
-#         r += (30 - time - time_to_next) * flows[n]
+#         r += (26 - time - time_to_next) * flows[n]
 #     return r
 
 max_reward = 0
 num_permutations = 0
 
-def permute(currentPurmutation: int, elementsToPermutate: int, graph, flows, current_node, partial_reward, time):
+rewards = {}
+
+def permute(currentPurmutation: int, elementsToPermutate: int, graph, flows, current_node, partial_reward, time, second):
     global max_reward, num_permutations
+
+    if not second:
+        if not rewards.get(currentPurmutation):
+            rewards[currentPurmutation] = partial_reward
+        if rewards.get(currentPurmutation) < partial_reward:
+            # print('replace')
+            rewards[currentPurmutation] = partial_reward
 
     if elementsToPermutate == 0:
         num_permutations += 1
-        max_reward = max(max_reward, partial_reward)
     else:
         for x in (1 << p for p in range(0, elementsToPermutate.bit_length())):
             if (not (elementsToPermutate & x)) or x == current_node :
                 continue
             new_time = time + graph[current_node][x] + 1
-            if (new_time > 30):
-                max_reward = max(max_reward, partial_reward)
+            if (new_time > 26):
                 continue
-            new_reward = partial_reward + (30 - new_time) * flows[x]
+            new_reward = partial_reward + (26 - new_time) * flows[x]
 
-            permute(currentPurmutation | x, elementsToPermutate &  ~x, graph, flows, x, new_reward, new_time)
+            permute(currentPurmutation | x, elementsToPermutate &  ~x, graph, flows, x, new_reward, new_time, second)
     
 
 def main(argv):
@@ -89,10 +96,27 @@ def main(argv):
     print(f'{flows}')
     print(f'{node_ids}')
 
-    permute(0, start_elements_to_permute, graph, flows, start_node, 0, 0)
+    permute(0, start_elements_to_permute, graph, flows, start_node, 0, 0, False)
 
-    print(f'max reward: {max_reward}')
+    print(f'max single reward: {max(rewards.values())}')
+    
+    max_reward = 0
 
+    # print(len(rewards))
+
+    for x in rewards.items():
+        for y in rewards.items():
+            if x[0] & y[0] == 0:
+                
+                reward = x[1] + y[1]
+                # print(f'{x[0]} and {y[0]} gives {reward}')
+                if reward == 3374:
+                    print(f'{x[0]:b} and {y[0]:b} gives {reward}')
+
+                if reward > max_reward:
+                    max_reward = reward
+    
+    print(max_reward)
 
 
 
