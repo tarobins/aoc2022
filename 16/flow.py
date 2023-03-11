@@ -49,7 +49,7 @@ def permute(currentPurmutation: int, elementsToPermutate: int, graph, flows, cur
 def main(argv):
     graph = {}
     flows: dict = {}
-    start_node = 1
+    # start_node = 1
     f = open(argv[1])
 
     next_node_id = 1
@@ -82,6 +82,8 @@ def main(argv):
     start_elements_to_permute = 0
     for flow_key in flows.keys():
         start_elements_to_permute |= flow_key
+
+    start_node = node_ids['AA']
     
     print(f'start_elements_to_permute {start_elements_to_permute:b}')
     print(f'{flows}')
