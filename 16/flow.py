@@ -17,57 +17,77 @@ def shortest_path(graph, nodes):
                 if graph[i][j] > graph[i][k] + graph[j][k]:
                     graph[i][j] = graph[i][k] + graph[j][k]
 
-def max_remaining(remaining, flows, time, current_node, graph):
-    time_to_next = graph[current_node][remaining[0]]
-    r = 0
-    for n in remaining:
-        r += (30 - time - time_to_next) * flows[n]
-    return r
+# def max_remaining(remaining, flows, time, current_node, graph):
+#     time_to_next = graph[current_node][remaining[0]]
+#     r = 0
+#     for n in remaining:
+#         r += (30 - time - time_to_next) * flows[n]
+#     return r
 
 max_reward = 0
 num_permutations = 0
 
-def permute(currentPurmutation: list[str], elementsToPermutate: list[str], graph, flows, start_node, partial_reward, time):
+def permute(currentPurmutation: int, elementsToPermutate: int, graph, flows, current_node, partial_reward, time):
     global max_reward, num_permutations
-    current_node = start_node
-    if len(currentPurmutation) > 0:
-            current_node = currentPurmutation[-1]
-    
-    if len(elementsToPermutate) == 0:
+
+    if elementsToPermutate == 0:
         num_permutations += 1
         max_reward = max(max_reward, partial_reward)
     else:
-        for e in elementsToPermutate:
-            new_time = time + graph[current_node][e] + 1
+        for x in (1 << p for p in range(0, elementsToPermutate.bit_length())):
+            if (not (elementsToPermutate & x)) or x == current_node :
+                continue
+            new_time = time + graph[current_node][x] + 1
             if (new_time > 30):
                 max_reward = max(max_reward, partial_reward)
                 continue
-            new_reward = partial_reward + (30 - new_time) * flows[e]
+            new_reward = partial_reward + (30 - new_time) * flows[x]
 
-            permute(currentPurmutation + [e], [i for i in elementsToPermutate if i != e], graph, flows, start_node, new_reward, new_time)
+            permute(currentPurmutation | x, elementsToPermutate &  ~x, graph, flows, x, new_reward, new_time)
     
 
 def main(argv):
     graph = {}
-    flows = {}
-    start_node = 'AA'
-    nodes = set()
+    flows: dict = {}
+    start_node = 1
     f = open(argv[1])
+
+    next_node_id = 1
+    node_ids = {}
+
     while line := f.readline():
         node_match = re.findall(r'[A-Z]{2}', line)
-        if not start_node:
-            start_node = node_match[0]
-        graph[node_match[0]] = {}
-        nodes.add(node_match[0])
+        node_id = node_ids.get(node_match[0])
+        if not node_id:
+            node_id = next_node_id
+            next_node_id <<= 1
+            node_ids[node_match[0]] = node_id
+            
+        graph[node_id] = {} 
+            
+        
         for neighbor in node_match[1:]:
-            graph[node_match[0]][neighbor] = 1
+            neighbor_id = node_ids.get(neighbor)
+            if not neighbor_id:
+                neighbor_id = next_node_id
+                next_node_id <<= 1
+                node_ids[neighbor] = neighbor_id
+            graph[node_id][neighbor_id] = 1
         flow = int(re.findall(r'\d+', line)[0])
         if flow != 0:
-            flows[node_match[0]] = flow
+            flows[node_id] = flow
 
-    shortest_path(graph, nodes)
+    shortest_path(graph, node_ids.values())
 
-    permute([], list(flows.keys()), graph, flows, start_node, 0, 0)
+    start_elements_to_permute = 0
+    for flow_key in flows.keys():
+        start_elements_to_permute |= flow_key
+    
+    print(f'start_elements_to_permute {start_elements_to_permute:b}')
+    print(f'{flows}')
+    print(f'{node_ids}')
+
+    permute(0, start_elements_to_permute, graph, flows, start_node, 0, 0)
 
     print(f'max reward: {max_reward}')
 
