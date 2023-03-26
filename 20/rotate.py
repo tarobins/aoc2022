@@ -11,16 +11,16 @@ def main(argv):
         f = open('20/test_input.txt')
     else:
         f = open(argv[1])
-    d = list(enumerate([int(line.strip()) for line in f.readlines()]))
+    d = list(enumerate([int(line.strip()) * 811589153 for line in f.readlines()]))
 
     # print(f'Initial:\n{[i[1] for i in d]}')
-    
-    for i in range(len(d)):
-        cur_index = current_location(d, i)
-        cur_item = d[cur_index]
-        d.pop(cur_index)
-        new_index = ((cur_index % len(d)) + cur_item[1]) % len(d)
-        d.insert(new_index, cur_item)
+    for j in range(10):
+        for i in range(len(d)):
+            cur_index = current_location(d, i)
+            cur_item = d[cur_index]
+            d.pop(cur_index)
+            new_index = ((cur_index % len(d)) + cur_item[1]) % len(d)
+            d.insert(new_index, cur_item)
         # print(f'after {i} ({cur_item[1]} moves)\n{[i[1] for i in d]}')
         
     index_of_zero = item_location(d, 0)
